@@ -1,15 +1,63 @@
 import React, { Component } from 'react'
 
+const ShowError = ({errors}) => {
+  return (
+    <div class="fst-italic text-danger"> {
+      errors.map((errors, i) => <div key={i}>{errors}</div>)
+    }
+      
+    </div>
+  )
+}
+
 export default class register extends Component {
     state = {
         user: '',
         contact: '',
         email: '',
-        pass: ''
+        pass: '',
+        error: []
     }
+
+    
 
     handleButton = (u) => {
       u.preventDefault();
+      const {user, contact, email, pass} = this.state;
+
+      let message = [];
+
+      if (user.length === 0) {
+        message = [...message, 'Please enter your username.']
+      }
+
+      if (contact.length === 0) {
+        message = [...message, 'Please enter your contact.']
+      }
+
+      if (email.length === 0) {
+        message = [...message, 'Please enter your email.']
+      }
+
+      if (pass.length === 0) {
+        message = [...message, 'Please enter your password.']
+      }
+
+      const Re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+      if (!Re.test(String(email).toLowerCase())) {
+        message =[...message, 'Wrong email.']
+      }
+
+      if (pass.length < 6) {
+        message = [...message, 'Password is too short']
+      }
+
+      if (message.length > 0) {
+        this.setState({
+          errors: message
+        })
+      } else {
         alert('user: ' + this.state.user + 
         ' | Contact: ' +
         this.state.contact + 
@@ -23,6 +71,10 @@ export default class register extends Component {
           email: '',
           pass: ''
         })
+        this.setState({
+          errors: []
+        })
+      }
     }
 
   render() {
@@ -38,6 +90,9 @@ export default class register extends Component {
 					</div>
 
 					<div class="card card-body m-sm-4">
+          {
+            this.state.errors && <ShowError errors={this.state.errors} /> 
+          }
 						<form onSubmit={this.handleButton}>
 							<div class="mb-3">
               <label class="form-label">Username</label>
@@ -47,6 +102,7 @@ export default class register extends Component {
                   maxLength={10}
                   onChange={u => this.setState({user: u.target.value})} />
                 </div>
+                
 							</div>
 							<div class="mb-3">
 								<label class="form-label">Contact</label>
@@ -57,14 +113,18 @@ export default class register extends Component {
                   onChange={u => this.setState({contact: u.target.value})} />
                 </div>
 							</div>
+              
 							<div class="mb-3">
 								<label class="form-label">Email</label>
+                
 								<div class="input-group">
                   <input type="email" class="form-control" placeholder="email@example.com" aria-label="Username" aria-describedby="basic-addon1"
                   name="email" 
                   onChange={u => this.setState({email: u.target.value})} />
                 </div>
+                
 							</div>
+              
 							<div class="mb-3">
 								<label class="form-label">Password</label>
 								<div class="input-group">
